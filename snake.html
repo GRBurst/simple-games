@@ -1,0 +1,184 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+
+<center>
+<h1>Snake</h1>
+<h2>Score: <span id="score">0</span></h2>
+<canvas id="canvas" width="300" height="300" onclick="startGame()"></canvas>
+<table width="150" height="150">
+    <tr>
+        <td></td>
+        <td style="background: gray" onmousedown="lastKeyPressed = 'ArrowUp'"></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td style="background: gray" onmousedown="lastKeyPressed = 'ArrowLeft'"></td>
+        <td></td>
+        <td style="background: gray" onmousedown="lastKeyPressed = 'ArrowRight'"></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td style="background: gray" onmousedown="lastKeyPressed = 'ArrowDown'"></td>
+        <td></td>
+    </tr>
+</table>
+</center>
+
+<script>
+
+const canvasElement = document.getElementById("canvas");
+const canvas = canvasElement.getContext("2d");
+const scoreElement = document.getElementById("score");
+
+const width = 30;
+const height = 30;
+const scale = 10;
+
+
+let snake;
+let food;
+let direction;
+let score;
+let gameOver;
+
+let lastKeyPressed = null;
+let timer = null;
+
+
+function newGame() {
+    snake = [
+        {x: 15, y: 15},
+        {x: 14, y: 15},
+        {x: 13, y: 15},
+        {x: 12, y: 15},
+    ];
+    direction = {dx: 1, dy: 0};
+    createNewFood();
+    score = 0;
+    gameOver = false;
+}
+
+function clearScreen() {
+    canvas.fillStyle = "#EEEEEE";
+    canvas.fillRect(0, 0, width * scale, height * scale);
+}
+
+
+function drawFood() {
+    canvas.fillStyle = "#EE99AA";
+    canvas.fillRect(food.x * scale, food.y * scale, scale, scale);
+}
+
+function drawSnake() {
+    canvas.fillStyle = "#AAEEAA";
+    snake.forEach( position => {
+        canvas.fillRect(position.x * scale, position.y * scale, scale, scale);
+    });
+}
+
+function drawScore() {
+    scoreElement.innerText = score;
+}
+
+function drawGameOver() {
+    if(gameOver) {
+        canvas.fillStyle = "#EE99AA";
+        canvas.font = "50px Arial";
+        canvas.textAlign = "center";
+        canvas.fillText("Game Over", canvasElement.width/2, canvasElement.height/2); 
+    }
+}
+
+function draw() {
+    clearScreen();
+    drawFood();
+    drawSnake();
+    drawScore();
+    drawGameOver();
+}
+
+function moveSnake() {
+    const head = snake[0];
+    const snakeEatsFood = head.x == food.x && head.y == food.y;
+
+    const nextHead = {x: head.x + direction.dx, y: head.y + direction.dy};
+    snake.unshift(nextHead);
+
+    if(snakeEatsFood) {
+        createNewFood();
+        score += 1;
+    } else {
+        snake.pop();
+    }
+}
+
+function changeDirection() {
+    if(lastKeyPressed == "ArrowUp"    && direction.dx != 0) direction = {dx:  0, dy: -1};
+    if(lastKeyPressed == "ArrowDown"  && direction.dx != 0) direction = {dx:  0, dy:  1};
+    if(lastKeyPressed == "ArrowLeft"  && direction.dy != 0) direction = {dx: -1, dy:  0};
+    if(lastKeyPressed == "ArrowRight" && direction.dy != 0) direction = {dx:  1, dy:  0};
+}
+
+function createNewFood() {
+    const randomX = Math.floor(Math.random()*width);
+    const randomY = Math.floor(Math.random()*height);
+    food = {x: randomX, y: randomY};
+    const foodOnSnake = snake.some(position => position.x == food.x && position.y == food.y);
+    if(foodOnSnake)
+        createNewFood();
+}
+
+
+function startGame() {
+    if(gameOver) {
+        newGame();
+    }
+
+    if(timer == null) {
+        timer = setInterval(tick, 200);
+    }
+}
+
+function stopGame() {
+    if(timer != null) {
+        clearInterval(timer);
+        timer = null;
+    }
+}
+
+function checkIfGameOver() {
+    const head = snake[0];
+    const snakeTouchesTail = snake.some((position, index) => index != 0 && position.x == head.x && position.y == head.y);
+    const snakeTouchesBorder = head.x < 0 || head.x >= width || head.y < 0 || head.y >= height;
+    if(snakeTouchesTail || snakeTouchesBorder) {
+        gameOver = true;
+    }
+}
+
+function tick() {
+    changeDirection();
+    moveSnake();
+    checkIfGameOver();
+
+    draw();
+
+    lastKeyPressed = null;
+    if(gameOver) stopGame();
+}
+
+document.addEventListener('keydown', event => {
+    startGame();
+    lastKeyPressed = event.key;
+});
+
+newGame();
+draw();
+
+
+</script>
+
+</body>
+</html>
