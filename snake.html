@@ -62,18 +62,18 @@ function newGame() {
 }
 
 function clearScreen() {
-    canvas.fillStyle = "#EEEEEE";
+    canvas.fillStyle = "#E7E9EE";
     canvas.fillRect(0, 0, width * scale, height * scale);
 }
 
 
 function drawFood() {
-    canvas.fillStyle = "#EE99AA";
+    canvas.fillStyle = "#FF3B7A";
     canvas.fillRect(food.x * scale, food.y * scale, scale, scale);
 }
 
 function drawSnake() {
-    canvas.fillStyle = "#AAEEAA";
+    canvas.fillStyle = "#42E67B";
     snake.forEach( position => {
         canvas.fillRect(position.x * scale, position.y * scale, scale, scale);
     });
@@ -85,7 +85,7 @@ function drawScore() {
 
 function drawGameOver() {
     if(gameOver) {
-        canvas.fillStyle = "#EE99AA";
+        canvas.fillStyle = "#FF5B29";
         canvas.font = "50px Arial";
         canvas.textAlign = "center";
         canvas.fillText("Game Over", canvasElement.width/2, canvasElement.height/2); 
