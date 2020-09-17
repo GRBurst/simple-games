@@ -1,0 +1,49 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+
+<canvas id="canvas" width="300" height="300"></canvas>
+
+<script>
+
+const canvasElement = document.getElementById("canvas");
+const canvas = canvasElement.getContext("2d");
+
+
+
+// background
+canvas.fillStyle = "#E7E9EE";
+canvas.fillRect(0, 0, 300, 300);
+
+let snake = {x: 30, y: 30};
+let direction = {dx: 0, dy: 0};
+
+function drawSquare(pos) {
+    canvas.fillStyle = "#42E67B";
+    canvas.fillRect(pos.x, pos.y, 10, 10);
+}
+
+drawSquare(snake);
+
+
+function tick() {
+    snake.x += direction.dx;
+    snake.y += direction.dy;
+    drawSquare(snake);
+}
+
+setInterval(tick, 200);
+
+document.addEventListener('keydown', event => {
+    if(event.key == "ArrowUp"   ) direction = {dx:   0, dy: -10};
+    if(event.key == "ArrowDown" ) direction = {dx:   0, dy:  10};
+    if(event.key == "ArrowLeft" ) direction = {dx: -10, dy:   0};
+    if(event.key == "ArrowRight") direction = {dx:  10, dy:   0};
+});
+
+</script>
+
+</body>
+</html>
